@@ -35,21 +35,39 @@ import org.dmg.pmml.TreeModel.SplitCharacteristic;
 import org.dmg.pmml.Value;
 import org.dmg.pmml.Version;
 
+/**
+ * Class to convert Random Forest Model into PMML
+ * @author Deepa
+ *
+ */
 public class RandomForestToPMML {
+	//String array to hold the names of the attributes
 	static String[] attributeNames = null;
+	
+	//String to hold the name of the class label attribute
 	static String classLabelName = null;
+	
+	//String array to hold the values of the class labels in order
 	static String[] classLabelValues = null;
 	
-	static
-	public void marshal(PMML pmml) throws JAXBException {
+	/**
+	 * Marshals the PMML object to file or output stream
+	 * @param pmml - PMMl object with all the values set from model
+	 * @throws JAXBException - exception if the marshaller is unable to marshal the PMML object
+	 */
+	public static void marshal(PMML pmml) throws JAXBException {
 		File file = new File("D:\\Courses\\CapStone\\PMML\\MyRF.xml");
 		Marshaller marshaller = createMarshaller();
 		marshaller.marshal(pmml, file);
 		marshaller.marshal(pmml, System.out);
 	}
 	
-	static
-	public Marshaller createMarshaller() throws JAXBException {
+	/**
+	 * Creates the marshaller for JAXB
+	 * @return - returns the Marshaller
+	 * @throws JAXBException - exception if the marshaller is unable to marshal the PMML object
+	 */
+	public static Marshaller createMarshaller() throws JAXBException {
 		JAXBContext context = JAXBContext.newInstance(PMML.class);
 
 		Marshaller marshaller = context.createMarshaller();
@@ -58,6 +76,11 @@ public class RandomForestToPMML {
 		return marshaller;
 	}
 	
+	/**
+	 * Creates the PMML object using the values and knowledge learned by the model 
+	 * @param model - RandomForestModel
+	 * @throws JAXBException - exception if the marshaller is unable to marshal the PMML object
+	 */
 	public static void createObject(RandomForestModel model) throws JAXBException{
 		Map<String, String> treeConfig = RandomForestHelper.getServerMap();
 		Header header = setHeader();
@@ -77,13 +100,21 @@ public class RandomForestToPMML {
 		marshal(pmml);
 	}
 
+	/**
+	 * Sets the values of the Nodes in the tree
+	 * @param tree - DecisionTreeModel which is the individual tree
+	 * @return - Node with the root value set
+	 */
 	private static Node setNode(DecisionTreeModel tree) {
 		org.apache.spark.mllib.tree.model.Node topNode = tree.topNode();
 		printNodes(topNode);
-		return preNodes(topNode);
+		return postOrderTraversal(topNode);
 	}
 
-	
+	/**
+	 * Prints the nodes of the individual trees
+	 * @param topNode - root of the tree
+	 */
 	private static void printNodes(
 			org.apache.spark.mllib.tree.model.Node topNode) {
 		if(topNode == null){
@@ -96,7 +127,12 @@ public class RandomForestToPMML {
 			printNodes(topNode.rightNode().get());
 	}
 	
-    private static Node preNodes(
+	/**
+	 * Performs a Post Order Traversal of the trees
+	 * @param topNode - root of the tree
+	 * @return - Node with the top node values set
+	 */
+    private static Node postOrderTraversal(
             org.apache.spark.mllib.tree.model.Node topNode) {
 	    if(topNode == null){
 	            return null;
@@ -113,12 +149,19 @@ public class RandomForestToPMML {
 	    }
 	    System.out.println(topNode.id());
 	    if(!topNode.leftNode().isEmpty())
-	            pmmlNode.withNodes(preNodes(topNode.leftNode().get()));
+	            pmmlNode.withNodes(postOrderTraversal(topNode.leftNode().get()));
 	    if(!topNode.rightNode().isEmpty())
-	            pmmlNode.withNodes(preNodes(topNode.rightNode().get()));
+	            pmmlNode.withNodes(postOrderTraversal(topNode.rightNode().get()));
 	    return pmmlNode;
     }
 
+    /**
+     * Set the Segmentation
+     * @param output - Output object
+     * @param schema - MiningSchema object
+     * @param model - RandomForestModel object
+     * @return
+     */
     private static MiningModel setSegmentation(Output output,
 			MiningSchema schema, RandomForestModel model) {
 		Segmentation segmentation = new Segmentation(MultipleModelMethodType.MAJORITY_VOTE);
@@ -145,6 +188,10 @@ public class RandomForestToPMML {
 		return models;
 	}
 
+    /**
+     * Set the MiningSchema
+     * @return - MiningSchema object with the values set
+     */
 	private static MiningSchema setMiningFields() {
 		List<MiningField> miningFields = new ArrayList<MiningField>();
 		MiningField miningField = new MiningField(new FieldName(classLabelName));
@@ -160,6 +207,10 @@ public class RandomForestToPMML {
 		return schema;
 	}
 
+	/**
+	 * Set the DataDictionary
+	 * @return - DataDictionary object with the values set
+	 */
 	private static DataDictionary setDataDictionary() {
 		DataDictionary dataDictionary = new DataDictionary();
 		
@@ -181,6 +232,10 @@ public class RandomForestToPMML {
 		return dataDictionary;
 	}
 
+	/**
+	 * Set the Output values in the PMML
+	 * @return - Output object with the values set
+	 */
 	private static Output setOutput() {
 		Output output = new Output();
 		List<OutputField> outputFields = new ArrayList<OutputField>();
@@ -197,22 +252,14 @@ public class RandomForestToPMML {
 		output.withOutputFields(outputFields);
 		return output;
 	}
-
+	
+	/**
+	 * Set the PMML header values
+	 * @return Header with proper values set
+	 */
 	private static Header setHeader() {
 		Header header = new Header();
 		header.setDescription(Constants.RANDOMFOREST_TREE_MODEL);
 		return header;
-	}
-	
-	public static void createObject() throws JAXBException{
-		Header header = setHeader();
-		DataDictionary dataDictionary = new DataDictionary();
-		dataDictionary.setNumberOfFields(4);	
-		PMML pmml = new PMML(header, dataDictionary, String.valueOf(Version.PMML_4_2));
-		marshal(pmml);
-	}
-	
-	public static void main(String args[]) throws JAXBException{
-		RandomForestToPMML.createObject(null);
 	}
 }

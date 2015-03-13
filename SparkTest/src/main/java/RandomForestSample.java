@@ -1,5 +1,7 @@
 import java.util.HashMap;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -18,10 +20,6 @@ public class RandomForestSample {
 		final long startTime = System.currentTimeMillis();
 		SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForestClassification");
 		JavaSparkContext sc = new JavaSparkContext(sparkConf);
-	
-		// Load and parse the data file.
-		//String datapath = "data/mllib/sample_libsvm_data.txt";
-		//JavaRDD<LabeledPoint> data = MLUtils.loadLibSVMFile(sc.sc(), datapath).toJavaRDD();
 		// Split the data into training and test sets (30% held out for testing)
 		String path = args[0];
 		final int classLabelIndex = 4;
@@ -75,11 +73,11 @@ public class RandomForestSample {
 		System.out.println("Learned classification forest model:\n" + model.toDebugString());
 		final long endTime = System.currentTimeMillis();
 		System.out.println("Total execution time: " + (endTime - startTime) );
-		/*try {
+		try {
 			RandomForestToPMML.createObject(model);
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 	  }
 }

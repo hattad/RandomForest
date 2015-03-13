@@ -100,8 +100,6 @@ public class DecisionTreeEnsemble{
 		    }
 		}));
 	}
-	//String sampleDatapath1 = "examples/src/main/resources/sampletree2";
-	//MLUtils.saveAsLibSVMFile(sample2.rdd(), sampleDatapath1);
 	// Train a DecisionTree model for classification.
 	JavaPairRDD<Double, Double> predictionAndLabel = null;
 	for(int i = 0 ; i < NUM_TREES ; i++){
