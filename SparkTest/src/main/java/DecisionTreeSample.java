@@ -64,7 +64,7 @@ public class DecisionTreeSample{
 		public Boolean call(Tuple2<Double, Double> pl) {
 		  return !pl._1().equals(pl._2());
 		}
-		}).count() / data.count();
+		}).count() / testData.count();
 		System.out.println("Training error: " + trainErr);
 		System.out.println("Learned classification tree model:\n" + model);
 	}

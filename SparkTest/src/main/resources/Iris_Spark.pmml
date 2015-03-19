@@ -16,14 +16,14 @@
          <MiningField usageType="active" name="Sepal.Length" />
          <MiningField usageType="active" name="Sepal.Width" />
          <MiningField usageType="active" name="Petal.Length" />
-         <MiningField usageType="predicted" name="Petal.Width" />
-         <MiningField usageType="predicted" name="Petal.Width" />
+         <MiningField usageType="active" name="Petal.Width" />
+         <MiningField usageType="predicted" name="Species" />
       </MiningSchema>
       <Output>
          <OutputField feature="predictedValue" name="Species" />
-         <OutputField feature="probability" dataType="double" optype="continuous" name="setosa" />
-         <OutputField feature="probability" dataType="double" optype="continuous" name="versicolor" />
-         <OutputField feature="probability" dataType="double" optype="continuous" name="virginica" />
+         <OutputField feature="probability" dataType="double" optype="continuous" name="Probability_setosa" value="setosa" />
+         <OutputField feature="probability" dataType="double" optype="continuous" name="Probability_versicolor" value="versicolor" />
+         <OutputField feature="probability" dataType="double" optype="continuous" name="Probability_virginica" value="virginica"/>
       </Output>
       <Segmentation multipleModelMethod="majorityVote">
          <Segment id="1">
