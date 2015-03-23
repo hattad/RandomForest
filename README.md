@@ -1,5 +1,6 @@
 # RandomForest
 Random Forest Implementation on Spark
+
 Random forests have a flavour of bagging along with randomness. In a typical decision tree, the nodes are split using the best 
 split among all variables. However, in the case of Random forests, each node is split using a subset of the total features 
 available. Although it sounds absurd, turns out better in terms of accuracy as compared to many other classifiers. 
