@@ -12,8 +12,7 @@ document is an XML document with root element as PMML.
 Spark currently does not have any implementation to convert its machine learning models into PMML. 
 We have implemented a framework to convert Random Forest model trained in Apache Spark into PMML
 
-This Random Forest implementation makes use of the Apache Spark RDD's to store the chunk of data in memory which makes Spark so efficient
-in data processing.
+This Random Forest implementation makes use of the Apache Spark RDD's to store the chunk of data in memory which makes Spark so efficient in data processing.
 Apache Spark has has an existing implementation of Decision Trees and Regression Trees which we have made use of, to build our 
 forests on. We have also implemented a utility program which converts 
-the Spark trained Random Forest model into PMML[6] which is a standard for converting machine learning models to XML format.
+the Spark trained Random Forest model into PMML which is a standard for converting machine learning models to XML format.
